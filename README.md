@@ -98,7 +98,15 @@ import * as Tone from 'tone'
 WebEar.init({ toneJs: true })
 ```
 
-**Option D — plain script tag**
+**Option D — Three.js WebGL Game**
+```js
+import * as THREE from 'three'
+const listener = new THREE.AudioListener()
+camera.add(listener)
+WebEar.init({ tapNode: listener.getInput() })
+```
+
+**Option E — plain script tag**
 ```html
 <script src="node_modules/webear/client-snippet.js"></script>
 <script>WebEar.init()</script>
