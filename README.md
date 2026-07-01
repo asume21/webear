@@ -13,7 +13,7 @@ An [MCP](https://modelcontextprotocol.io) server + browser SDK that gives AI cod
 
 ---
 
-![AI Web Perception Demo](./assets/demo.png)
+![AI Web Perception Demo](./assets/demo.gif)
 
 ---
 
