@@ -1,11 +1,11 @@
 name: webear
-displayName: WebEar
+displayName: WebEar & Web Perception
 description: >
-  Give your AI coding assistant ears. Capture, analyze, and describe live audio
-  from any running web application via the Web Audio API — not a file on disk,
-  not the microphone. Works with Claude Code, Cursor, Windsurf, and any
-  MCP-compatible IDE.
-version: 1.0.0
+  Give your AI real senses — hear, see, and feel any web app in real time.
+  Capture and analyze live audio, video, performance, network, security,
+  and console logs over MCP. Works with Claude Code, Cursor, Windsurf,
+  and any MCP-compatible IDE.
+version: 2.0.0
 license: MIT
 author: asume21
 homepage: https://github.com/asume21/webear
