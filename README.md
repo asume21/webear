@@ -13,13 +13,7 @@ An [MCP](https://modelcontextprotocol.io) server + browser SDK that gives AI cod
 
 ---
 
-<!-- DEMO GIF — record a 15-second clip showing:
-     1. Dev app playing audio in browser
-     2. Asking Claude/Cursor: "capture 3s and tell me why the bass sounds muddy"
-     3. Claude calls capture_audio then analyze_audio
-     4. Claude explains: bass band is 42%, spectral centroid 620Hz, no clipping
-     Replace this comment with: ![demo](./demo.gif)
--->
+![AI Web Perception Demo](./assets/demo.png)
 
 ---
 
