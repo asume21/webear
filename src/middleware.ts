@@ -25,10 +25,16 @@ export interface WebEarMiddlewareOptions {
   maxCaptures?: number
   /** Auto-evict captures older than this many minutes (default: 10) */
   maxAgeMins?: number
-  /** Max upload size in bytes (default: 50MB) */
+  /** Max upload size in bytes (default: 5MB) */
   maxUploadBytes?: number
   /** Only enable in development mode (default: true) */
   devOnly?: boolean
+  /** Optional auth token — if set, all requests must include `Authorization: Bearer <token>` */
+  authToken?: string
+  /** Maximum concurrent SSE connections (default: 10) */
+  maxSseClients?: number
+  /** Allowed origins for SSE and uploads. If empty, all origins are accepted. */
+  allowedOrigins?: string[]
 }
 
 interface StoredCapture {
@@ -50,8 +56,11 @@ export function webearMiddleware(options: WebEarMiddlewareOptions = {}): Router 
   const {
     maxCaptures    = 50,
     maxAgeMins     = 10,
-    maxUploadBytes = 50 * 1024 * 1024,
+    maxUploadBytes = 5 * 1024 * 1024,
     devOnly        = true,
+    authToken,
+    maxSseClients  = 10,
+    allowedOrigins = [],
   } = options
 
   const router = Router()
@@ -61,6 +70,31 @@ export function webearMiddleware(options: WebEarMiddlewareOptions = {}): Router 
       res.status(404).json({ error: 'webear is disabled in production' })
     })
     return router
+  }
+
+  // ── Auth guard — if authToken is configured, require it on all requests ──
+  if (authToken) {
+    router.use((req: Request, res: Response, next) => {
+      const header = req.headers['authorization']
+      const token = typeof header === 'string'
+        ? header.replace(/^Bearer\s+/i, '').trim()
+        : ''
+      if (token !== authToken) {
+        return void res.status(401).json({ error: 'Unauthorized — invalid or missing auth token' })
+      }
+      next()
+    })
+  }
+
+  // ── Origin guard — if allowedOrigins is configured, reject unknown origins ──
+  if (allowedOrigins.length > 0) {
+    router.use((req: Request, res: Response, next) => {
+      const origin = req.headers['origin'] || req.headers['referer']?.replace(/\/[^/]*$/, '') || ''
+      if (origin && !allowedOrigins.some(o => origin.startsWith(o))) {
+        return void res.status(403).json({ error: 'Forbidden — origin not allowed' })
+      }
+      next()
+    })
   }
 
   // ── In-memory state ────────────────────────────────────────────────
@@ -93,6 +127,10 @@ export function webearMiddleware(options: WebEarMiddlewareOptions = {}): Router 
   // ── SSE endpoint — browser subscribes here ─────────────────────────
 
   router.get('/events', (req: Request, res: Response) => {
+    if (sseClients.size >= maxSseClients) {
+      return void res.status(503).json({ error: 'Too many SSE connections — try again later' })
+    }
+
     res.setHeader('Content-Type',       'text/event-stream')
     res.setHeader('Cache-Control',      'no-cache')
     res.setHeader('Connection',         'keep-alive')

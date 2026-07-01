@@ -2,7 +2,9 @@ import { z } from 'zod';
 import { waitForCapture } from '../client.js';
 
 export const describeAudioSchema = {
-  capture_id: z.string().describe('The capture ID returned by capture_audio to describe'),
+  capture_id: z.string()
+    .regex(/^[a-zA-Z0-9_-]{4,64}$/, 'capture_id must be 4–64 alphanumeric characters')
+    .describe('The capture ID returned by capture_audio to describe'),
 };
 
 const API_BASE = process.env.MCP_API_URL || 'https://www.codedswitch.com';

@@ -163,6 +163,9 @@
     isCapturing = true;
     lastCaptureId = captureId;
 
+    // Cap duration to prevent runaway recordings (500ms – 30s)
+    durationMs = Math.min(30000, Math.max(500, durationMs || 3000));
+
     var tap = ensureTap();
     if (!tap) {
       isCapturing = false;
@@ -275,9 +278,12 @@
 
       // Dev-only guard
       if (options.devOnly !== false) {
-        var isDev = (typeof import !== 'undefined' && typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV) ||
-                    (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production') ||
-                    (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1'));
+        var isDev = false;
+        try {
+          // Check common development indicators
+          if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production') isDev = true;
+          if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) isDev = true;
+        } catch (e) { /* ignore */ }
         if (!isDev) {
           log('Skipping init — not in dev mode. Set devOnly: false to override.');
           return;

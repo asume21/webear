@@ -1,3 +1,15 @@
+/**
+ * Web Perception Browser SDK
+ *
+ * 6-sensor browser SDK for AI agents: audio, visuals, performance,
+ * network, security, and logs over a remote MCP relay.
+ *
+ * SECURITY NOTE: EventSource does not support custom headers. The API key is
+ * sent as a URL query parameter, which means it appears in server access logs,
+ * browser history, and proxy logs. Use per-user revocable keys (`wbr_` prefix)
+ * and enable rate limiting on the relay server.
+ */
+
 export type WebPerceptionSensor = 'ear' | 'eye' | 'sense' | 'nerve' | 'shield' | 'log';
 
 export type SensorConnectionState =
@@ -343,6 +355,15 @@ abstract class BaseSensorBridge implements SensorHandle {
   protected abstract capture(command: CaptureCommand): Promise<void>;
 
   protected async upload(captureId: string, body: BodyInit, contentType: string): Promise<void> {
+    // Client-side upload size cap (5MB) — a 30s WebM/Opus clip is ~1.5MB
+    const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+    if (body instanceof Blob && body.size > MAX_UPLOAD_BYTES) {
+      throw new Error(`${this.label} capture too large (${(body.size / 1024 / 1024).toFixed(1)}MB) — max 5MB`);
+    }
+    if (typeof body === 'string' && body.length > MAX_UPLOAD_BYTES) {
+      throw new Error(`${this.label} capture too large (${(body.length / 1024 / 1024).toFixed(1)}MB) — max 5MB`);
+    }
+
     const apiKey = await this.runtime.apiKey();
     const response = await fetch(this.url(`/${this.endpoint}/blob/${captureId}`), {
       method: 'POST',
@@ -368,7 +389,10 @@ abstract class BaseSensorBridge implements SensorHandle {
   }
 
   protected debug(message: string): void {
-    if (this.runtime.debug) console.debug(`[${this.endpoint}-bridge] ${message}`);
+    if (this.runtime.debug) {
+      // Never log the full API key
+      console.debug(`[${this.endpoint}-bridge] ${message}`);
+    }
   }
 
   protected scheduleReconnect(): void {

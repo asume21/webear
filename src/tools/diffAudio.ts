@@ -4,8 +4,12 @@ import { waitForCapture } from '../client.js'
 import { analyzePcm, type AudioAnalysisReport } from '../analysis/pcmAnalyzer.js'
 
 export const diffAudioSchema = {
-  capture_id_a: z.string().describe('First capture ID (the "before")'),
-  capture_id_b: z.string().describe('Second capture ID (the "after")'),
+  capture_id_a: z.string()
+    .regex(/^[a-zA-Z0-9_-]{4,64}$/, 'capture_id must be 4\u201364 alphanumeric characters')
+    .describe('First capture ID (the "before")'),
+  capture_id_b: z.string()
+    .regex(/^[a-zA-Z0-9_-]{4,64}$/, 'capture_id must be 4\u201364 alphanumeric characters')
+    .describe('Second capture ID (the "after")'),
 }
 
 async function decodeWebmToPcm(webmBuffer: Buffer): Promise<{ samples: Float32Array; sampleRate: number }> {

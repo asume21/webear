@@ -1,6 +1,16 @@
 /**
  * WebEar browser client — v1.1.0
  *
+ * @deprecated Use `webear/perception` instead. This legacy SDK monkey-patches
+ * AudioNode.prototype.connect which can interfere with third-party libraries.
+ * The perception SDK requires explicit audioNode/connectAudioSource options
+ * and does not modify browser prototypes.
+ *
+ * SECURITY NOTE: EventSource does not support custom headers. The API key is
+ * sent as a URL query parameter, which means it appears in server access logs,
+ * browser history, and proxy logs. Use per-user revocable keys (`wbr_` prefix)
+ * and enable rate limiting on the relay server.
+ *
  * Captures live audio from the browser tab and relays it to the cloud.
  * No local server required — everything routes through codedswitch.com.
  *
@@ -105,6 +115,9 @@ function tapToneDestination(ctx: AudioContext) {
 // ── Recording ─────────────────────────────────────────────────────────────────
 
 async function record(durationMs: number): Promise<Blob> {
+  // Cap duration to prevent runaway recordings
+  const safeDuration = Math.min(30000, Math.max(500, durationMs))
+
   // Try Tone.js tap if not already tapped
   if (!_tapped) {
     const toneCtx = (window as any).Tone?.getContext?.()?.rawContext as AudioContext | undefined
@@ -131,7 +144,7 @@ async function record(durationMs: number): Promise<Blob> {
     recorder.onerror = (e) => reject(new Error(`MediaRecorder error: ${String(e)}`))
 
     recorder.start(200)
-    setTimeout(() => { if (recorder.state === 'recording') recorder.stop() }, durationMs)
+    setTimeout(() => { if (recorder.state === 'recording') recorder.stop() }, safeDuration)
   })
 }
 
@@ -165,6 +178,13 @@ function connect() {
     try {
       const blob   = await record(durationMs)
       const buffer = await blob.arrayBuffer()
+
+      // Cap upload size to 5MB — a 30s WebM/Opus clip is ~1.5MB
+      const MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+      if (buffer.byteLength > MAX_UPLOAD_BYTES) {
+        console.error(`[WebEar] Capture too large (${(buffer.byteLength / 1024 / 1024).toFixed(1)}MB) — skipping upload`)
+        return
+      }
 
       const res = await fetch(`${_serverUrl}/api/webear/blob/${captureId}`, {
         method:  'POST',
@@ -206,6 +226,11 @@ export const WebEar = {
       console.error('[WebEar] apiKey is required. Get one at https://www.codedswitch.com/developer')
       return
     }
+
+    console.warn('[WebEar] webear/browser is deprecated — use webear/perception instead. See https://github.com/asume21/webear#web-perception')
+
+    const maskedKey = _apiKey.length > 8 ? _apiKey.slice(0, 8) + '••••' : '••••'
+    console.log(`[WebEar] Initializing with key ${maskedKey}`)
 
     patchAudioContext()
     connect()
