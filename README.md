@@ -5,9 +5,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-blue.svg)](https://modelcontextprotocol.io)
 
-**Give your AI coding assistant ears.**
+**Give your AI real senses — hear, see, and feel any web app.**
 
-An [MCP](https://modelcontextprotocol.io) server that lets AI coding assistants capture, analyze, and describe **live audio from a running web application** — not a file on disk, not the physical microphone. The actual `AudioContext` output your app is rendering right now.
+An [MCP](https://modelcontextprotocol.io) server + browser SDK that gives AI coding assistants **direct sensory access** to a live web application. Audio, visuals, performance, network, security, and console — captured from the browser, analyzed in real time, delivered via MCP.
 
 > *"The beat sounds muddy"* → your AI captures 3 seconds, measures the spectral centroid at 580 Hz with 45% energy below 250 Hz, and tells you exactly why.
 
@@ -290,6 +290,86 @@ WebEar.init({
 ## Why Not Just Use the Microphone?
 
 Microphone MCPs capture room sound — your fan noise, chair creaks, and room reverb are all in the recording. `webear` taps the Web Audio API **before it hits the DAC**, giving you a clean digital signal with no room artifacts.
+
+---
+
+## Web Perception — Full Sensor Suite
+
+WebEar started as audio-only. **Web Perception** expands it to 6 senses:
+
+| Sensor | What it perceives |
+|---|---|
+| **WebEar** | Audio — mix quality, rhythm, instruments, clipping |
+| **WebEye** | Visual — canvas, UI layout, animations, screenshots |
+| **WebSense** | Performance — frame rate, memory, audio latency |
+| **WebNerve** | Network — API latencies, connection quality, storage |
+| **WebShield** | Security — cookies, storage exposure, CSP, framing |
+| **WebLog** | Console — logs, warnings, errors, uncaught exceptions |
+
+### Install the full browser SDK
+
+```js
+import { WebPerception } from 'webear/perception'
+
+WebPerception.init({
+  apiKey: 'wbr_YOUR_API_KEY',
+  relayUrl: 'https://www.codedswitch.com',
+  sensors: ['ear', 'eye', 'sense', 'nerve', 'shield', 'log'],
+})
+```
+
+Or use a single sensor:
+
+```js
+import { WebEar } from 'webear/perception'
+
+WebEar.init({
+  apiKey: 'wbr_YOUR_API_KEY',
+  ear: { audioContext: myCtx, audioNode: masterGain },
+})
+```
+
+### Connect via MCP (hosted relay — no local server required)
+
+```json
+{
+  "mcpServers": {
+    "webear": {
+      "url": "https://www.codedswitch.com/api/webear/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer wbr_YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+### Available MCP Tools
+
+| Sensor | Tool | Credits | Description |
+|---|---|---|---|
+| **Ear** | `capture_audio` | Free | Record live tab audio |
+| **Ear** | `analyze_audio` | 1 | BPM, loudness, frequency bands, clipping, dynamic range |
+| **Ear** | `describe_audio` | 2 | AI plain-English description — instruments, genre, mood, mix notes |
+| **Ear** | `diff_audio` | 1 | Compare two captures — loudness, tone, timing deltas |
+| **Ear** | `groove_score` | 2 | Grid alignment, swing factor, consistency (0–100%) |
+| **Ear** | `capture_and_analyze` | 1 | Capture + analysis in one call |
+| **Ear** | `mix_coach` | 3 | Structured mixing feedback |
+| **Eye** | `capture_video` | Free | Record canvas/video from the tab |
+| **Eye** | `describe_video` | 2 | AI visual description — layout, colors, bugs |
+| **Eye** | `diff_visuals` | 2 | Compare two visual captures |
+| **Sense** | `capture_telemetry` | Free | FPS, memory, layout shifts, audio latency |
+| **Sense** | `analyze_telemetry` | 1 | Frame drops, memory pressure, audio underruns |
+| **Nerve** | `capture_nerve` | Free | API timings, connection quality, storage size |
+| **Nerve** | `analyze_nerve` | 1 | Slow APIs, connection quality, storage bloat |
+| **Shield** | `capture_shield` | Free | Cookies, CSP, storage exposure, framing |
+| **Shield** | `analyze_shield` | 1 | CORS issues, non-HttpOnly cookies, missing CSP |
+| **Log** | `capture_logs` | Free | Console output + uncaught exceptions |
+| **Log** | `analyze_logs` | 1 | Error patterns, stack traces, repeated warnings |
+
+### Get an API Key
+
+Sign up at **[codedswitch.com](https://www.codedswitch.com)** → Settings → WebEar. Keys start with `wbr_`.
 
 ---
 
