@@ -6,12 +6,12 @@
     "url": "https://github.com/asume21/webear",
     "source": "github"
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "webear",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "transport": {
         "type": "stdio"
       },
@@ -24,7 +24,7 @@
           "name": "WEBEAR_BASE_URL"
         },
         {
-          "description": "API key from codedswitch.com for audio analysis",
+          "description": "API key from codedswitch.com/developer (Generate API Key) for audio analysis",
           "isRequired": true,
           "format": "string",
           "isSecret": true,

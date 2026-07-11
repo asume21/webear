@@ -157,7 +157,9 @@ WebEar.init({ tapNode: listener.getInput() })
 
 ### 5. Get an API key
 
-Get your free `CODEDSWITCH_API_KEY` at **[codedswitch.com](https://www.codedswitch.com)**.
+1. Create a free account at **[codedswitch.com](https://www.codedswitch.com)**.
+2. Go to **[codedswitch.com/developer](https://www.codedswitch.com/developer)** (also in the account menu as **Developer API**).
+3. Click **Generate API Key** — that value is your `CODEDSWITCH_API_KEY`. Keys start with `wbr_`.
 
 Free tier: 50 analyses/day. No credit card required.
 
@@ -363,9 +365,23 @@ WebEar.init({
 
 ### Get an API Key
 
-Sign up at **[codedswitch.com](https://www.codedswitch.com)** → Settings → WebEar. Keys start with `wbr_`.
+1. Create a free account at **[codedswitch.com](https://www.codedswitch.com)**.
+2. Open **[codedswitch.com/developer](https://www.codedswitch.com/developer)** — also linked as **Developer API** in the account menu.
+3. Click **Generate API Key** and copy it. Keys start with `wbr_`.
+
+Free tier: 50 analyses/day, no credit card required.
 
 ---
+
+## Changelog
+
+### 2.0.1
+- **Fixed the getting-started path for API keys.** The previous instruction
+  ("Settings → WebEar") was wrong — there is no WebEar section under Settings.
+  Keys live at **[codedswitch.com/developer](https://www.codedswitch.com/developer)**
+  (linked as **Developer API** in the account menu). Both the Quick Start and the
+  Web Perception sections now point to the correct place.
+- The SDK's "missing API key" console error now links straight to the key page.
 
 ## Contributing
 

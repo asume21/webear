@@ -310,7 +310,9 @@ abstract class BaseSensorBridge implements SensorHandle {
     if (this.sseSource || this.isCapturing) return;
     const apiKey = await this.runtime.apiKey();
     if (!apiKey) {
-      this.setStatus('error', `${this.label} API key is required`);
+      const msg = `${this.label} API key is required. Get one free at https://www.codedswitch.com/developer (sign up, then open "Developer API").`;
+      this.setStatus('error', msg);
+      console.error(`[WebEar] ${msg}`);
       this.scheduleReconnect();
       return;
     }
