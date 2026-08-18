@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { spawn } from 'child_process'
 import { waitForCapture } from '../client.js'
 import { analyzePcm, type AudioAnalysisReport } from '../analysis/pcmAnalyzer.js'
+import { decodeWebmToPcm } from '../analysis/decode.js'
 
 export const diffAudioSchema = {
   capture_id_a: z.string()
@@ -10,23 +10,6 @@ export const diffAudioSchema = {
   capture_id_b: z.string()
     .regex(/^[a-zA-Z0-9_-]{4,64}$/, 'capture_id must be 4\u201364 alphanumeric characters')
     .describe('Second capture ID (the "after")'),
-}
-
-async function decodeWebmToPcm(webmBuffer: Buffer): Promise<{ samples: Float32Array; sampleRate: number }> {
-  const SAMPLE_RATE = 44100
-  return new Promise((resolve, reject) => {
-    const ff = spawn('ffmpeg', ['-i', 'pipe:0', '-f', 'f32le', '-ac', '1', '-ar', String(SAMPLE_RATE), 'pipe:1'])
-    const chunks: Buffer[] = []
-    ff.stdout.on('data', (c: Buffer) => chunks.push(c))
-    ff.stderr.on('data', () => {})
-    ff.stdout.on('end', () => {
-      const combined = Buffer.concat(chunks)
-      resolve({ samples: new Float32Array(combined.buffer.slice(combined.byteOffset, combined.byteOffset + combined.byteLength)), sampleRate: SAMPLE_RATE })
-    })
-    ff.on('error', reject)
-    ff.stdin.write(webmBuffer)
-    ff.stdin.end()
-  })
 }
 
 function delta(a: number, b: number, label: string, unit = ''): string {

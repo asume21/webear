@@ -5,7 +5,7 @@ description: >
   Capture and analyze live audio, video, performance, network, security,
   and console logs over MCP. Works with Claude Code, Cursor, Windsurf,
   and any MCP-compatible IDE.
-version: 2.0.1
+version: 2.1.0
 license: MIT
 author: asume21
 homepage: https://github.com/asume21/webear

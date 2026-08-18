@@ -1,6 +1,6 @@
 {
   "name": "webear",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "mcpName": "io.github.asume21/webear",
   "description": "Give your AI real senses — hear, see, and feel any web app in real time. Audio, visuals, performance, network, security, and console capture via MCP. Works with Windsurf, Cursor, Claude Code, and any MCP-compatible IDE.",
   "type": "module",

@@ -47,7 +47,7 @@ server.tool(
 
 server.tool(
   'analyze_audio',
-  'Run signal analysis on a captured audio clip. Returns RMS, peak dB, clipping, spectral centroid, frequency band energy, estimated BPM, and timing jitter.',
+  'Analyze a captured audio clip. Without an API key: a basic local report (duration, loudness, peak, clipping) computed on this machine — no audio is uploaded. With CODEDSWITCH_API_KEY: the full report — spectral centroid, frequency band energy, crest factor, estimated BPM and timing jitter.',
   analyzeAudioSchema,
   analyzeAudioHandler,
 )

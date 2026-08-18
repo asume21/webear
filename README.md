@@ -155,7 +155,24 @@ WebEar.init({ tapNode: listener.getInput() })
 }
 ```
 
-### 5. Get an API key
+### 5. Get an API key — optional, and not to start
+
+**`analyze_audio` works with no key and no account.** If `ffmpeg` is on your PATH,
+it decodes and analyzes the capture **on your machine** and returns a basic report:
+duration, loudness, peak level and whether the audio is clipping. Nothing is
+uploaded. Try the tool before you sign up for anything.
+
+A key unlocks the parts that need more than arithmetic:
+
+| | No key | With key |
+|---|---|---|
+| `capture_audio` | ✓ | ✓ |
+| `analyze_audio` | Basic — duration, loudness, peak, clipping (local) | Full — spectral centroid, band energy, crest factor, BPM, timing jitter |
+| `describe_audio` — what it SOUNDS like | — | ✓ |
+| `mix_coach` — measured + heard | — | ✓ |
+| `diff_audio` — before/after | — | ✓ |
+
+To get one:
 
 1. Create a free account at **[codedswitch.com](https://www.codedswitch.com)**.
 2. Go to **[codedswitch.com/developer](https://www.codedswitch.com/developer)** (also in the account menu as **Developer API**).
