@@ -6,7 +6,8 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "webear": "dist/index.js"
+    "webear": "dist/index.js",
+    "webear-remote": "dist/remote.js"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -24,7 +25,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "node --import tsx/esm src/index.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "start:remote": "node dist/remote.js"
   },
   "keywords": [
     "mcp",
@@ -59,7 +61,7 @@
     "url": "https://github.com/asume21/webear/issues"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
