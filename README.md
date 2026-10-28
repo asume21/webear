@@ -46,6 +46,34 @@ The key difference from every other audio MCP: **this taps the Web Audio graph d
 
 ---
 
+
+## Optional remote MCP + recording analysis (experimental)
+
+The original `npx webear` stdio integration remains unchanged. To expose a
+remote Streamable HTTP MCP endpoint and analyze existing recordings:
+
+```bash
+npm install
+npm run build
+WEBEAR_MCP_TOKEN="$(openssl rand -hex 32)" HOST=127.0.0.1 PORT=4100 npm run start:remote
+```
+
+The MCP endpoint is `POST /mcp`. Set `WEBEAR_MCP_TOKEN` to the same secret
+in the connecting client's bearer-token configuration. The remote process
+intentionally binds to loopback by default; terminate HTTPS at a trusted reverse
+proxy before exposing it publicly. Do not expose the port unauthenticated.
+
+- `analyze_recording` accepts a base64 encoded MP3, WAV, M4A or WebM file
+  (maximum decoded size 12 MiB), requires `ffmpeg`, and returns structured
+  signal metrics including BPM, levels, spectrum and onset jitter.
+- This is **not** a transcription, vocal separation, or subjective listening
+  service. With a beat playing, the metrics describe the combined track.
+- Uploaded recording content is processed in memory by the MCP process.
+- Direct ChatGPT attachment transfer is **not** implemented. A compatible MCP
+  client must encode and pass the recording content explicitly.
+- WebEar cannot enable unsupported custom-MCP installation features in a
+  ChatGPT account; deployment and client eligibility are separate issues.
+
 ## Quick Start
 
 ### 1. Install
