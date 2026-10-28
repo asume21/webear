@@ -43,14 +43,13 @@ const httpServer = createServer(async (req, res) => {
     'Analyze a base64-encoded audio file with ffmpeg and return structured signal features. These measurements describe the combined recording, not isolated vocal flow.',
     analyzeRecordingSchema, analyzeRecordingHandler)
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined })
+  res.once('close', () => { void server.close() })
   try {
     await server.connect(transport)
     await transport.handleRequest(req, res)
   } catch (error) {
     console.error('[webear-remote] Request failed', error)
     if (!res.headersSent) res.writeHead(500).end('Internal error')
-  } finally {
-    res.once('close', () => { void server.close() })
   }
 })
 httpServer.listen(port, host, () => {
